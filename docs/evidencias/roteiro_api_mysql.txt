@@ -1,0 +1,491 @@
+==================================================================
+SombraSP | GS 2026.2 SOA e Web Services | Turma 3ESPH
+Equipe: Felipe Marques de Oliveira (RM 556319) e Gabriel Barros Cisoto (RM 556309)
+API: http://localhost:8085 | Banco: MySQL (container sombrasp-mysql)
+Data local: 2026-11-18 14:34:33 -03 | UTC: 2026-11-18T17:34:33Z
+==================================================================
+
+### 1. Banco e migrações (Flyway)
+
+[MySQL] SELECT VERSION() AS mysql_versao, DATABASE() AS banco;
+   +--------------+----------+
+   | mysql_versao | banco    |
+   +--------------+----------+
+   | 8.4.13       | sombrasp |
+   +--------------+----------+
+
+[MySQL] SELECT installed_rank, version, description, success FROM flyway_schema_history ORDER BY installed_rank;
+   +----------------+---------+---------------------------------------------------+---------+
+   | installed_rank | version | description                                       | success |
+   +----------------+---------+---------------------------------------------------+---------+
+   |              1 | 1       | create-table-parceiros                            |       1 |
+   |              2 | 2       | create-table-pontos-apoio                         |       1 |
+   |              3 | 3       | create-table-alertas-calor                        |       1 |
+   |              4 | 4       | create-table-usuarios                             |       1 |
+   |              5 | 5       | alter-table-alertas-calor-add-column-encerrado-em |       1 |
+   |              6 | 6       | inserir-dados-iniciais                            |       1 |
+   +----------------+---------+---------------------------------------------------+---------+
+
+[MySQL] SHOW TABLES;
+   +-----------------------+
+   | Tables_in_sombrasp    |
+   +-----------------------+
+   | alertas_calor         |
+   | flyway_schema_history |
+   | parceiros             |
+   | pontos_apoio          |
+   | usuarios              |
+   +-----------------------+
+
+### 2. Consultas públicas (cidadão / app, sem token)
+
+$ curl -X GET http://localhost:8085/health-check 
+-> HTTP 200
+   {
+     "status": "UP",
+     "api": "SombraSP - SOA e Web Services (GS 2026.2, 3ESPH)"
+   }
+   ✔ esperado 200
+
+$ curl -X GET http://localhost:8085/pontos?sort=id 
+-> HTTP 200
+   {
+     "content": [
+       {
+         "id": 1,
+         "nome": "Tenda de hidratação da Praça da Sé",
+         "tipo": "SOMBRA_E_HIDRATACAO",
+         "bairro": "Sé",
+         "acessivel": true,
+         "latitude": -23.5503,
+         "longitude": -46.6339
+       },
+       {
+         "id": 2,
+         "nome": "Sombra das árvores da Praça da República",
+         "tipo": "SOMBRA",
+         "bairro": "República",
+         "acessivel": true,
+         "latitude": -23.5435,
+         "longitude": -46.6426
+       },
+       {
+         "id": 3,
+         "nome": "Ponto de água dos ambulantes",
+         "tipo": "HIDRATACAO",
+         "bairro": "Sé",
+         "acessivel": false,
+         "latitude": -23.5457,
+         "longitude": -46.6321
+       },
+       {
+         "id": 4,
+         "nome": "Loja parceira com água gratuita",
+         "tipo": "HIDRATACAO",
+         "bairro": "Sé",
+         "acessivel": true,
+         "latitude": -23.5486,
+         "longitude": -46.6355
+       }
+     ],
+     "page": {
+       "size": 10,
+       "number": 0,
+       "totalElements": 4,
+       "totalPages": 1
+     }
+   }
+   ✔ esperado 200
+
+$ curl -X GET http://localhost:8085/pontos?bairro=Rep%C3%BAblica 
+-> HTTP 200
+   {
+     "content": [
+       {
+         "id": 2,
+         "nome": "Sombra das árvores da Praça da República",
+         "tipo": "SOMBRA",
+         "bairro": "República",
+         "acessivel": true,
+         "latitude": -23.5435,
+         "longitude": -46.6426
+       }
+     ],
+     "page": {
+       "size": 10,
+       "number": 0,
+       "totalElements": 1,
+       "totalPages": 1
+     }
+   }
+   ✔ esperado 200
+
+$ curl -X GET http://localhost:8085/pontos/proximos?latitude=-23.5503&longitude=-46.6339&raioKm=1 
+-> HTTP 200
+   [
+     {
+       "id": 1,
+       "nome": "Tenda de hidratação da Praça da Sé",
+       "tipo": "SOMBRA_E_HIDRATACAO",
+       "bairro": "Sé",
+       "logradouro": "Praça da Sé",
+       "acessivel": true,
+       "horarioFuncionamento": "08h às 18h",
+       "distanciaKm": 0.0
+     },
+     {
+       "id": 4,
+       "nome": "Loja parceira com água gratuita",
+       "tipo": "HIDRATACAO",
+       "bairro": "Sé",
+       "logradouro": "Rua Direita",
+       "acessivel": true,
+       "horarioFuncionamento": "09h às 18h",
+       "distanciaKm": 0.25
+     },
+     {
+       "id": 3,
+       "nome": "Ponto de água dos ambulantes",
+       "tipo": "HIDRATACAO",
+       "bairro": "Sé",
+       "logradouro": "Rua 25 de Março",
+       "acessivel": false,
+       "horarioFuncionamento": "07h às 19h",
+       "distanciaKm": 0.543
+     }
+   ]
+   ✔ esperado 200
+
+$ curl -X GET http://localhost:8085/pontos/proximos?latitude=-23.5503&longitude=-46.6339&raioKm=1&tipo=SOMBRA 
+-> HTTP 200
+   [
+     {
+       "id": 1,
+       "nome": "Tenda de hidratação da Praça da Sé",
+       "tipo": "SOMBRA_E_HIDRATACAO",
+       "bairro": "Sé",
+       "logradouro": "Praça da Sé",
+       "acessivel": true,
+       "horarioFuncionamento": "08h às 18h",
+       "distanciaKm": 0.0
+     }
+   ]
+   ✔ esperado 200
+
+$ curl -X GET http://localhost:8085/alertas 
+-> HTTP 200
+   {
+     "content": [
+       {
+         "id": 2,
+         "dataReferencia": "2026-11-19",
+         "temperaturaMaxima": 33.5,
+         "nivel": "ALERTA",
+         "fonte": "MODELO_IA_INMET",
+         "ativo": true
+       },
+       {
+         "id": 1,
+         "dataReferencia": "2026-11-18",
+         "temperaturaMaxima": 34.2,
+         "nivel": "ALERTA",
+         "fonte": "ESTACAO_ESP32",
+         "ativo": true
+       }
+     ],
+     "page": {
+       "size": 10,
+       "number": 0,
+       "totalElements": 2,
+       "totalPages": 1
+     }
+   }
+   ✔ esperado 200
+
+$ curl -X GET http://localhost:8085/alertas/hoje 
+-> HTTP 200
+   {
+     "id": 1,
+     "dataReferencia": "2026-11-18",
+     "temperaturaMaxima": 34.2,
+     "nivel": "ALERTA",
+     "fonte": "ESTACAO_ESP32",
+     "mensagem": "Calor forte agora no Centro. Procure sombra e beba água a cada 20 minutos.",
+     "ativo": true,
+     "emitidoEm": "2026-11-18T10:00:00",
+     "encerradoEm": null
+   }
+   ✔ esperado 200
+
+### 3. Segurança JWT
+
+$ curl -X POST http://localhost:8085/pontos -H Content-Type: application/json -d {}
+-> HTTP 401
+   {
+     "status": 401,
+     "erro": "Não autenticado",
+     "mensagem": "Envie um token válido no cabeçalho Authorization: Bearer <token> (obtenha em POST /login).",
+     "caminho": "/pontos"
+   }
+   ✔ esperado 401
+
+$ curl -X POST http://localhost:8085/login -H Content-Type: application/json -d {"login":"gestor@sombrasp.dev","senha":"senha-errada"}
+-> HTTP 401
+   {
+     "status": 401,
+     "erro": "Não autenticado",
+     "mensagem": "Login ou senha inválidos.",
+     "caminho": "/login",
+     "timestamp": "2026-11-18T14:34:34.911201"
+   }
+   ✔ esperado 401
+
+$ curl -X POST http://localhost:8085/login -H Content-Type: application/json -d {"login":"gestor@sombrasp.dev","senha":"Gestor@SombraSP2026"}
+-> HTTP 200
+   {
+     "token": "<token JWT omitido>",
+     "tipo": "Bearer",
+     "expiraEmSegundos": 7200
+   }
+   ✔ esperado 200
+   (token recebido e usado nas próximas chamadas; não é gravado no log)
+
+### 4. CRUD de ponto de apoio (gestor)
+
+$ curl -X POST http://localhost:8085/pontos -H Authorization: Bearer <token do gestor> -H Content-Type: application/json -d {"nome":"","tipo":"SOMBRA","latitude":120,"longitude":-46.6,"acessivel":true,"parceiroId":1,"endereco":{"logradouro":"Rua","bairro":"Sé","cidade":"São Paulo","uf":"sp","cep":"123"}}
+-> HTTP 400
+   {
+     "status": 400,
+     "erro": "Dados inválidos",
+     "mensagem": "Há campos inválidos na requisição.",
+     "caminho": "/pontos",
+     "campos": [
+       {
+         "campo": "endereco.cep",
+         "mensagem": "O CEP deve ter o formato 00000-000."
+       },
+       {
+         "campo": "endereco.uf",
+         "mensagem": "A UF deve ter 2 letras maiúsculas (ex.: SP)."
+       },
+       {
+         "campo": "latitude",
+         "mensagem": "A latitude deve estar entre -90 e 90."
+       },
+       {
+         "campo": "nome",
+         "mensagem": "O nome do ponto é obrigatório."
+       }
+     ]
+   }
+   ✔ esperado 400
+
+$ curl -X POST http://localhost:8085/pontos -H Authorization: Bearer <token do gestor> -H Content-Type: application/json -d {"nome":"Ponto sem parceiro","tipo":"SOMBRA","latitude":-23.548,"longitude":-46.6324,"acessivel":true,"parceiroId":999,"endereco":{"logradouro":"Pátio do Colégio","bairro":"Sé","cidade":"São Paulo","uf":"SP","cep":"01016-040"}}
+-> HTTP 404
+   {
+     "status": 404,
+     "erro": "Não encontrado",
+     "mensagem": "Parceiro 999 não encontrado.",
+     "caminho": "/pontos",
+     "timestamp": "2026-11-18T14:34:35.168713"
+   }
+   ✔ esperado 404
+
+$ curl -X POST http://localhost:8085/pontos -H Authorization: Bearer <token do gestor> -H Content-Type: application/json -d {"nome":"Marquise do Pátio do Colégio","tipo":"SOMBRA","descricao":"Marquise ampla com bancos.","latitude":-23.548,"longitude":-46.6324,"acessivel":true,"horarioFuncionamento":"Livre","parceiroId":1,"endereco":{"logradouro":"Pátio do Colégio","numero":"2","bairro":"Sé","cidade":"São Paulo","uf":"SP","cep":"01016-040"}}
+-> HTTP 201
+   {
+     "id": 6,
+     "nome": "Marquise do Pátio do Colégio",
+     "tipo": "SOMBRA",
+     "descricao": "Marquise ampla com bancos.",
+     "latitude": -23.548,
+     "longitude": -46.6324,
+     "acessivel": true,
+     "horarioFuncionamento": "Livre",
+     "endereco": {
+       "logradouro": "Pátio do Colégio",
+       "numero": "2",
+       "complemento": null,
+       "bairro": "Sé",
+       "cidade": "São Paulo",
+       "uf": "SP",
+       "cep": "01016-040"
+     },
+     "parceiroId": 1,
+     "parceiroNome": "Subprefeitura Sé (parceria proposta)",
+     "ativo": true
+   }
+   ✔ esperado 201
+
+[MySQL] SELECT id, nome, tipo, bairro, parceiro_id, ativo FROM pontos_apoio WHERE id = 6;
+   +----+--------------------------------+--------+--------+-------------+-------+
+   | id | nome                           | tipo   | bairro | parceiro_id | ativo |
+   +----+--------------------------------+--------+--------+-------------+-------+
+   |  6 | Marquise do Pátio do Colégio   | SOMBRA | Sé     |           1 |     1 |
+   +----+--------------------------------+--------+--------+-------------+-------+
+
+$ curl -X PUT http://localhost:8085/pontos -H Authorization: Bearer <token do gestor> -H Content-Type: application/json -d {"id":6,"nome":"Marquise do Pátio do Colégio (com água)","tipo":"SOMBRA_E_HIDRATACAO"}
+-> HTTP 200
+   {
+     "id": 6,
+     "nome": "Marquise do Pátio do Colégio (com água)",
+     "tipo": "SOMBRA_E_HIDRATACAO",
+     "descricao": "Marquise ampla com bancos.",
+     "latitude": -23.548,
+     "longitude": -46.6324,
+     "acessivel": true,
+     "horarioFuncionamento": "Livre",
+     "endereco": {
+       "logradouro": "Pátio do Colégio",
+       "numero": "2",
+       "complemento": null,
+       "bairro": "Sé",
+       "cidade": "São Paulo",
+       "uf": "SP",
+       "cep": "01016-040"
+     },
+     "parceiroId": 1,
+     "parceiroNome": "Subprefeitura Sé (parceria proposta)",
+     "ativo": true
+   }
+   ✔ esperado 200
+
+$ curl -X DELETE http://localhost:8085/pontos/6 -H Authorization: Bearer <token do gestor>
+-> HTTP 204
+   ✔ esperado 204
+
+$ curl -X GET http://localhost:8085/pontos/6 
+-> HTTP 404
+   {
+     "status": 404,
+     "erro": "Não encontrado",
+     "mensagem": "Ponto de apoio 6 não encontrado.",
+     "caminho": "/pontos/6",
+     "timestamp": "2026-11-18T14:34:35.566931"
+   }
+   ✔ esperado 404
+
+[MySQL] SELECT id, nome, tipo, ativo FROM pontos_apoio WHERE id = 6;  -- exclusão lógica: a linha continua, com ativo = 0
+   +----+--------------------------------------------+---------------------+-------+
+   | id | nome                                       | tipo                | ativo |
+   +----+--------------------------------------------+---------------------+-------+
+   |  6 | Marquise do Pátio do Colégio (com água)    | SOMBRA_E_HIDRATACAO |     0 |
+   +----+--------------------------------------------+---------------------+-------+
+
+### 5. Alertas de calor (regras de negócio)
+
+$ curl -X POST http://localhost:8085/alertas -H Authorization: Bearer <token do gestor> -H Content-Type: application/json -d {"dataReferencia":"2026-11-23","temperaturaMaxima":30.5,"fonte":"MANUAL"}
+-> HTTP 422
+   {
+     "status": 422,
+     "erro": "Regra de negócio",
+     "mensagem": "Temperatura máxima abaixo de 31 °C não gera alerta de calor.",
+     "caminho": "/alertas",
+     "timestamp": "2026-11-18T14:34:35.692325"
+   }
+   ✔ esperado 422
+
+$ curl -X POST http://localhost:8085/alertas -H Authorization: Bearer <token do gestor> -H Content-Type: application/json -d {"dataReferencia":"2026-11-23","temperaturaMaxima":36.0,"fonte":"MANUAL"}
+-> HTTP 201
+   {
+     "id": 4,
+     "dataReferencia": "2026-11-23",
+     "temperaturaMaxima": 36.0,
+     "nivel": "EMERGENCIA",
+     "fonte": "MANUAL",
+     "mensagem": "Calor extremo. Evite o sol entre 10h e 16h, beba água sempre e procure um ponto de apoio.",
+     "ativo": true,
+     "emitidoEm": "2026-11-18T14:34:35.738212",
+     "encerradoEm": null
+   }
+   ✔ esperado 201
+
+$ curl -X POST http://localhost:8085/alertas -H Authorization: Bearer <token do gestor> -H Content-Type: application/json -d {"dataReferencia":"2026-11-23","temperaturaMaxima":34.0,"fonte":"MANUAL"}
+-> HTTP 409
+   {
+     "status": 409,
+     "erro": "Conflito",
+     "mensagem": "Já existe alerta ativo da fonte MANUAL para 2026-11-23. Encerre o anterior antes de emitir outro.",
+     "caminho": "/alertas",
+     "timestamp": "2026-11-18T14:34:35.808349"
+   }
+   ✔ esperado 409
+
+$ curl -X POST http://localhost:8085/alertas -H Authorization: Bearer <token do gestor> -H Content-Type: application/json -d {"dataReferencia":"2020-01-01","temperaturaMaxima":33.0,"fonte":"MANUAL"}
+-> HTTP 422
+   {
+     "status": 422,
+     "erro": "Regra de negócio",
+     "mensagem": "Não é possível emitir alerta para uma data que já passou.",
+     "caminho": "/alertas",
+     "timestamp": "2026-11-18T14:34:35.854419"
+   }
+   ✔ esperado 422
+
+$ curl -X DELETE http://localhost:8085/alertas/4 -H Authorization: Bearer <token do gestor>
+-> HTTP 204
+   ✔ esperado 204
+
+$ curl -X DELETE http://localhost:8085/alertas/4 -H Authorization: Bearer <token do gestor>
+-> HTTP 409
+   {
+     "status": 409,
+     "erro": "Conflito",
+     "mensagem": "O alerta 4 já está encerrado.",
+     "caminho": "/alertas/4",
+     "timestamp": "2026-11-18T14:34:35.927423"
+   }
+   ✔ esperado 409
+
+[MySQL] SELECT id, data_referencia, temperatura_maxima, nivel, fonte, ativo, encerrado_em FROM alertas_calor ORDER BY id;
+   +----+-----------------+--------------------+------------+-----------------+-------+---------------------+
+   | id | data_referencia | temperatura_maxima | nivel      | fonte           | ativo | encerrado_em        |
+   +----+-----------------+--------------------+------------+-----------------+-------+---------------------+
+   |  1 | 2026-11-18      |               34.2 | ALERTA     | ESTACAO_ESP32   |     1 | NULL                |
+   |  2 | 2026-11-19      |               33.5 | ALERTA     | MODELO_IA_INMET |     1 | NULL                |
+   |  3 | 2026-11-23      |               36.0 | EMERGENCIA | MANUAL          |     0 | 2026-11-18 14:33:26 |
+   |  4 | 2026-11-23      |               36.0 | EMERGENCIA | MANUAL          |     0 | 2026-11-18 14:34:36 |
+   +----+-----------------+--------------------+------------+-----------------+-------+---------------------+
+
+### 6. Banco indisponível (MySQL parado com a API no ar)
+$ docker stop sombrasp-mysql
+
+$ curl -X GET http://localhost:8085/pontos/1 
+-> HTTP 503
+   {
+     "status": 503,
+     "erro": "Banco indisponível",
+     "mensagem": "Banco de dados indisponível no momento. Tente de novo em instantes.",
+     "caminho": "/pontos/1",
+     "timestamp": "2026-11-18T14:35:07.34027"
+   }
+   ✔ esperado 503
+$ docker start sombrasp-mysql
+
+$ curl -X GET http://localhost:8085/pontos/1 
+-> HTTP 200
+   {
+     "id": 1,
+     "nome": "Tenda de hidratação da Praça da Sé",
+     "tipo": "SOMBRA_E_HIDRATACAO",
+     "descricao": "Tenda com sombra e kits de água nos dias de alerta.",
+     "latitude": -23.5503,
+     "longitude": -46.6339,
+     "acessivel": true,
+     "horarioFuncionamento": "08h às 18h",
+     "endereco": {
+       "logradouro": "Praça da Sé",
+       "numero": "s/n",
+       "complemento": "Saída do Metrô Sé",
+       "bairro": "Sé",
+       "cidade": "São Paulo",
+       "uf": "SP",
+       "cep": "01001-000"
+     },
+     "parceiroId": 1,
+     "parceiroNome": "Subprefeitura Sé (parceria proposta)",
+     "ativo": true
+   }
+   ✔ esperado 200
+
+Resumo: 2026-11-18 14:35:12 -03 | divergências entre esperado e observado: 0
