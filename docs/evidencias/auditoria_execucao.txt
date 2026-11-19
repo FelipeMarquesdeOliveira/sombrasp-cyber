@@ -1,0 +1,152 @@
+AUDITORIA DE SEGURANÇA - SombraSP Cyber (GS 2026.2, FIAP 3ESPH)
+Execução: 19/11/2026 02:25:56 -03 | API: http://localhost:8086 | Banco: MySQL 8.4 (container sombrasp-cyber-mysql)
+Dados usados: fictícios (CPF de exemplo 123.456.789-09, RG 12.345.678-9, senha Calor@2026).
+
+==========================================================================
+0. Recomeço: apaga os eventos de segurança
+==========================================================================
+-> POST /laboratorio/reiniciar 
+
+<- HTTP 204
+
+==========================================================================
+T1. PARSING DE PII: cidadão se inscreve com CPF, RG, saúde e senha
+==========================================================================
+-> POST /cidadaos (corpo abaixo)
+   {"apelido":"Dona Maria (fictícia)","bairro":"Sé","cpf":"123.456.789-09","rg":"12.345.678-9","condicaoSaude":"Hipertensão (CID I10), usa diurético","senha":"Calor@2026","aceitaAlertas":true}
+{"id":1,"apelido":"Dona Maria (fictícia)","bairro":"Sé","cpf":"***.456.***-09","rg":"**.***.678-9","possuiCondicaoSaude":true,"condicaoSaude":"[DADO DE SAÚDE PROTEGIDO]","aceitaAlertas":true,"criadoEm":"2026-11-19T02:25:56.386332"}
+<- HTTP 201
+
+Como ficou gravado no MySQL (tabela cidadaos):
++----+------------------------+----------------+------------------+------------------------------+--------------+------------------------------+----------------------+
+| id | apelido                | cpf_mascarado  | cpf_indice_hmac  | cpf_cifrado_aes_gcm          | rg_mascarado | saude_cifrada                | senha_bcrypt         |
++----+------------------------+----------------+------------------+------------------------------+--------------+------------------------------+----------------------+
+|  1 | Dona Maria (fictícia)  | ***.456.***-09 | a7d1375f413b899e | v1:8AqqEHgtsPgYOy2gCu7jkgqII | **.***.678-9 | v1:2AATfWGJo+hJVzuKtQGRtSkXo | $2a$10$.oUkN0zekWZ0w |
++----+------------------------+----------------+------------------+------------------------------+--------------+------------------------------+----------------------+
+
+==========================================================================
+T2. PARSING DE PII no formato do enunciado: {"documento": "123.456.789-00"}
+==========================================================================
+-> POST /laboratorio/vazamento-log (corpo abaixo)
+   {"documento":"123.456.789-00"}
+{"tentativa":"gravar CPF e senha no log da aplicação","guarda":"GuardaTaintLog (Logback)","resultado":"Veja no painel de Risco Cidadão se a linha foi bloqueada."}
+<- HTTP 202
+
+==========================================================================
+T3. TAINT (sink LOG): código grava CPF e senha com log.info
+==========================================================================
+-> POST /laboratorio/vazamento-log (corpo abaixo)
+   {"cpf":"123.456.789-09","senha":"Calor@2026"}
+{"tentativa":"gravar CPF e senha no log da aplicação","guarda":"GuardaTaintLog (Logback)","resultado":"Veja no painel de Risco Cidadão se a linha foi bloqueada."}
+<- HTTP 202
+
+==========================================================================
+T4. TAINT (sink CONSOLE): código imprime o laudo com System.out.println
+==========================================================================
+-> POST /laboratorio/vazamento-console (corpo abaixo)
+   {"condicaoSaude":"Hipertensão (CID I10), usa diurético"}
+{"tentativa":"imprimir o laudo de saúde no console","guarda":"GuardaTaintConsole (System.out)","resultado":"Veja no painel de Risco Cidadão se a linha foi bloqueada."}
+<- HTTP 202
+
+==========================================================================
+T5. TAINT (sink HTTP): ficha de saúde pedida SEM login
+==========================================================================
+-> GET /laboratorio/ficha-saude/1 
+{"status":403,"erro":"Resposta bloqueada","mensagem":"A resposta continha dados pessoais e foi bloqueada para proteger o cidadão.","caminho":"/laboratorio/ficha-saude/1","protocolo":"d5896c2a-c12d-401c-8b0a-670d4c39e75a","timestamp":"2026-11-19T02:25:56.516459"}
+<- HTTP 403
+
+==========================================================================
+T6. TAINT (sink HTTP): a mesma ficha pedida pelo gestor autenticado (sai mascarada)
+==========================================================================
+(login do gestor feito; token omitido)
+-> GET /laboratorio/ficha-saude/1 
+{"id":1,"apelido":"Dona Maria (fictícia)","cpf":"***.456.***-09","rg":"**.***.678-9","condicaoSaude":"[DADO DE SAÚDE PROTEGIDO]"}
+<- HTTP 200
+
+==========================================================================
+T7. IA: aguardando a MiniMax traduzir os eventos
+==========================================================================
+Traduções pendentes: 0
++----+------------------------------+-------+---------+----------------------+--------+--------------------+------+
+| id | tipo                         | nivel | saida   | modulo               | origem | modelo_ia          | ms   |
++----+------------------------------+-------+---------+----------------------+--------+--------------------+------+
+|  1 | PII_DETECTADA                | BAIXO | ENTRADA | Cadastro do cidadão  | IA     | MiniMax-M3.1-Flash | 4772 |
+|  2 | PII_DETECTADA                | BAIXO | ENTRADA | Cadastro do cidadão  | IA     | MiniMax-M3.1-Flash | 1674 |
+|  3 | PII_DETECTADA                | BAIXO | ENTRADA | Cadastro do cidadão  | IA     | MiniMax-M3.1-Flash | 1109 |
+|  4 | VAZAMENTO_LOG_BLOQUEADO      | MEDIO | LOG     | Cadastro do cidadão  | IA     | MiniMax-M3.1-Flash | 3410 |
+|  5 | PII_DETECTADA                | BAIXO | ENTRADA | Saúde                | IA     | MiniMax-M3.1-Flash | 1965 |
+|  6 | VAZAMENTO_CONSOLE_BLOQUEADO  | MEDIO | CONSOLE | Saúde                | IA     | MiniMax-M3.1-Flash |  938 |
+|  7 | VAZAMENTO_RESPOSTA_BLOQUEADO | ALTO  | HTTP    | Saúde                | IA     | MiniMax-M3.1-Flash | 2743 |
+|  8 | DADO_MASCARADO_NA_RESPOSTA   | BAIXO | HTTP    | Saúde                | IA     | MiniMax-M3.1-Flash | 9956 |
++----+------------------------------+-------+---------+----------------------+--------+--------------------+------+
+
+Detalhe técnico (mascarado) -> mensagem para o cidadão:
+----
+              id: 1
+ detalhe_tecnico: PII detectada na entrada POST /cidadaos e marcada como contaminada (mascarada antes de log e banco): CPF em $.cpf (***.456.***-09); RG em $.rg (**.***.678-9); DADO_SAUDE em $.condicaoSaude ([DADO DE SAÚDE PROTEGIDO]); SENHA em $.senha ([SENHA PROTEGIDA])
+mensagem_cidadao: O cadastro recebeu seu CPF, RG, condição de saúde e senha, e guardou esses dados de forma protegida e escondida. O risco é baixo e você não precisa fazer nada.
+----
+              id: 2
+ detalhe_tecnico: PII detectada na entrada POST /laboratorio/vazamento-log e marcada como contaminada (mascarada antes de log e banco): CPF em $.documento (***.456.***-00)
+mensagem_cidadao: Seu CPF foi identificado no cadastro e ficou protegido, escondido e criptografado. Com risco baixo, você não precisa fazer nada.
+----
+              id: 3
+ detalhe_tecnico: PII detectada na entrada POST /laboratorio/vazamento-log e marcada como contaminada (mascarada antes de log e banco): CPF em $.cpf (***.456.***-09); SENHA em $.senha ([SENHA PROTEGIDA])
+mensagem_cidadao: Seu CPF e sua senha foram recebidos, mas ficaram protegidos, com a senha escondida e criptografada. Não é preciso fazer nada.
+----
+              id: 4
+ detalhe_tecnico: Taint sink bloqueado: o logger 'LaboratorioVazamentoController' tentou gravar CPF, SENHA em log (nível INFO) durante POST /laboratorio/vazamento-log. Linha descartada; conteúdo mascarado: Depuração do cadastro: cpf=***.456.***-09, senha=[SENHA PROTEGIDA]
+mensagem_cidadao: O sistema impediu que seu CPF e sua senha fossem guardados em um registro interno, mantendo esses dados protegidos. Você não precisa fazer nada.
+----
+              id: 5
+ detalhe_tecnico: PII detectada na entrada POST /laboratorio/vazamento-console e marcada como contaminada (mascarada antes de log e banco): DADO_SAUDE em $.condicaoSaude ([DADO DE SAÚDE PROTEGIDO])
+mensagem_cidadao: Seu dado de saúde foi recebido e guardado de forma protegida, com os detalhes escondidos e criptografados. Como o risco é baixo, você não precisa fazer nada.
+----
+              id: 6
+ detalhe_tecnico: Taint sink bloqueado: System.out.println tentou imprimir DADO_SAUDE no console durante POST /laboratorio/vazamento-console. Conteúdo mascarado: Laudo recebido do cidadão: [DADO DE SAÚDE PROTEGIDO]
+mensagem_cidadao: O sistema impediu que uma informação de saúde fosse registrada no histórico interno. Seus dados estão protegidos, e você não precisa fazer nada.
+----
+              id: 7
+ detalhe_tecnico: Taint sink bloqueado: resposta HTTP não autenticada de GET /laboratorio/ficha-saude/1 continha CPF ($.cpf), RG ($.rg), DADO_SAUDE ($.condicaoSaude). Resposta trocada por HTTP 403 (bloqueio de vazamento de PII).
+mensagem_cidadao: Uma pessoa sem permissão tentou acessar seu CPF, RG e dados de saúde. O sistema bloqueou o acesso e protegeu suas informações; você não precisa fazer nada.
+----
+              id: 8
+ detalhe_tecnico: Resposta autenticada de GET /laboratorio/ficha-saude/1 continha CPF ($.cpf), RG ($.rg), DADO_SAUDE ($.condicaoSaude). Valores mascarados antes do envio ao gestor.
+mensagem_cidadao: Seu CPF, RG e condição de saúde apareceram parcialmente escondidos para um atendente autorizado durante uma consulta de ficha de saúde. O sistema protegeu seus dados antes de enviar ao responsável, por isso o risco é baixo e você não precisa fazer nada.
+
+==========================================================================
+T8. DASHBOARD: GET /risco-cidadao (dados do painel)
+==========================================================================
+farol: VERMELHO | nível: ALTO | título: Risco alto
+mensagem: Uma pessoa sem permissão tentou acessar seu CPF, RG e dados de saúde. O sistema bloqueou o acesso e protegeu suas informações; você não precisa fazer nada.
+origem: IA | modelo: MiniMax-M3.1-Flash
+indicadores: {'dadosProtegidos': 5, 'vazamentosBloqueadosLog': 2, 'respostasBloqueadas': 1, 'traducoesIa': 8, 'totalEventos': 8}
+
+==========================================================================
+T9. CONFERÊNCIA: algum valor real apareceu no log da aplicação?
+==========================================================================
+  '123.456.789-09'           0 ocorrência(s)
+  '12345678909'              0 ocorrência(s)
+  'Calor@2026'               0 ocorrência(s)
+  '12.345.678-9'             0 ocorrência(s)
+  'Hipertensão (CID I10)'   0 ocorrência(s)
+  '123.456.789-00'           0 ocorrência(s)
+
+Linhas do log com as marcas [PII], [TAINT] e [IA] (como foram gravadas):
+2026-11-19T02:25:56.260-03:00 [PII] POST /cidadaos -> 4 dado(s) pessoal(is) marcado(s) como contaminado(s): CPF em $.cpf (***.456.***-09); RG em $.rg (**.***.678-9); DADO_SAUDE em $.condicaoSaude ([DADO DE SAÚDE PROTEGIDO]); SENHA em $.senha ([SENHA PROTEGIDA])
+2026-11-19T02:25:56.482-03:00 [PII] POST /laboratorio/vazamento-log -> 1 dado(s) pessoal(is) marcado(s) como contaminado(s): CPF em $.documento (***.456.***-00)
+2026-11-19T02:25:56.493-03:00 [PII] POST /laboratorio/vazamento-log -> 2 dado(s) pessoal(is) marcado(s) como contaminado(s): CPF em $.cpf (***.456.***-09); SENHA em $.senha ([SENHA PROTEGIDA])
+2026-11-19T02:25:56.494-03:00 [TAINT] Log bloqueado: Taint sink bloqueado: o logger 'LaboratorioVazamentoController' tentou gravar CPF, SENHA em log (nível INFO) durante POST /laboratorio/vazamento-log. Linha descartada; conteúdo mascarado: Depuração do cadastro: cpf=***.456.***-09, senha=[SENHA PROTEGIDA]
+2026-11-19T02:25:56.502-03:00 [PII] POST /laboratorio/vazamento-console -> 1 dado(s) pessoal(is) marcado(s) como contaminado(s): DADO_SAUDE em $.condicaoSaude ([DADO DE SAÚDE PROTEGIDO])
+[TAINT] Console bloqueado: Taint sink bloqueado: System.out.println tentou imprimir DADO_SAUDE no console durante POST /laboratorio/vazamento-console. Conteúdo mascarado: Laudo recebido do cidadão: [DADO DE SAÚDE PROTEGIDO]
+2026-11-19T02:25:56.516-03:00 [TAINT] Resposta bloqueada: Taint sink bloqueado: resposta HTTP não autenticada de GET /laboratorio/ficha-saude/1 continha CPF ($.cpf), RG ($.rg), DADO_SAUDE ($.condicaoSaude). Resposta trocada por HTTP 403 (bloqueio de vazamento de PII). (protocolo d5896c2a-c12d-401c-8b0a-670d4c39e75a)
+2026-11-19T02:25:56.524-03:00 [PII] POST /login -> 1 dado(s) pessoal(is) marcado(s) como contaminado(s): SENHA em $.senha ([SENHA PROTEGIDA])
+2026-11-19T02:25:56.704-03:00 [TAINT] Resposta de GET /laboratorio/ficha-saude/1 mascarada para usuário autenticado: CPF ($.cpf), RG ($.rg), DADO_SAUDE ($.condicaoSaude)
+2026-11-19T02:25:58.160-03:00 [IA] Evento PII_DETECTADA traduzido por MiniMax-M3.1-Flash em 1674 ms
+2026-11-19T02:25:59.286-03:00 [IA] Evento PII_DETECTADA traduzido por MiniMax-M3.1-Flash em 1109 ms
+2026-11-19T02:26:01.054-03:00 [IA] Evento PII_DETECTADA traduzido por MiniMax-M3.1-Flash em 4772 ms
+2026-11-19T02:26:02.711-03:00 [IA] Evento VAZAMENTO_LOG_BLOQUEADO traduzido por MiniMax-M3.1-Flash em 3410 ms
+2026-11-19T02:26:03.030-03:00 [IA] Evento PII_DETECTADA traduzido por MiniMax-M3.1-Flash em 1965 ms
+2026-11-19T02:26:03.661-03:00 [IA] Evento VAZAMENTO_CONSOLE_BLOQUEADO traduzido por MiniMax-M3.1-Flash em 938 ms
+2026-11-19T02:26:05.783-03:00 [IA] Evento VAZAMENTO_RESPOSTA_BLOQUEADO traduzido por MiniMax-M3.1-Flash em 2743 ms
+2026-11-19T02:26:13.630-03:00 [IA] Evento DADO_MASCARADO_NA_RESPOSTA traduzido por MiniMax-M3.1-Flash em 9956 ms

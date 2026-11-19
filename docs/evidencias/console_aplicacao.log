@@ -1,0 +1,108 @@
+
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+
+ :: Spring Boot ::                (v4.0.5)
+
+2026-11-19T02:25:51.704-03:00  INFO 24866 --- [sombrasp-cyber] [           main] b.c.f.sombrasp.SombraSpApplication       : Starting SombraSpApplication using Java 25.0.4.1 with PID 24866 (/Users/felipemarques/Desktop/FIAP(Faculdade)/Cybersecurity/GS - SombraSP/sombrasp-cyber/target/classes started by felipemarques in /Users/felipemarques/Desktop/FIAP(Faculdade)/Cybersecurity/GS - SombraSP/sombrasp-cyber)
+2026-11-19T02:25:51.705-03:00  INFO 24866 --- [sombrasp-cyber] [           main] b.c.f.sombrasp.SombraSpApplication       : No active profile set, falling back to 1 default profile: "default"
+2026-11-19T02:25:52.174-03:00  INFO 24866 --- [sombrasp-cyber] [           main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2026-11-19T02:25:52.200-03:00  INFO 24866 --- [sombrasp-cyber] [           main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 23 ms. Found 6 JPA repository interfaces.
+2026-11-19T02:25:52.659-03:00  INFO 24866 --- [sombrasp-cyber] [           main] o.s.boot.tomcat.TomcatWebServer          : Tomcat initialized with port 8086 (http)
+2026-11-19T02:25:52.675-03:00  INFO 24866 --- [sombrasp-cyber] [           main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2026-11-19T02:25:52.675-03:00  INFO 24866 --- [sombrasp-cyber] [           main] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/11.0.20]
+2026-11-19T02:25:52.722-03:00  INFO 24866 --- [sombrasp-cyber] [           main] b.w.c.s.WebApplicationContextInitializer : Root WebApplicationContext: initialization completed in 998 ms
+2026-11-19T02:25:52.853-03:00  INFO 24866 --- [sombrasp-cyber] [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2026-11-19T02:25:53.149-03:00  INFO 24866 --- [sombrasp-cyber] [           main] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection com.mysql.cj.jdbc.ConnectionImpl@388e4c25
+2026-11-19T02:25:53.150-03:00  INFO 24866 --- [sombrasp-cyber] [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2026-11-19T02:25:53.170-03:00  INFO 24866 --- [sombrasp-cyber] [           main] org.flywaydb.core.FlywayExecutor         : Database: jdbc:mysql://localhost:3307/sombrasp_cyber (MySQL 8.4)
+2026-11-19T02:25:53.189-03:00  WARN 24866 --- [sombrasp-cyber] [           main] o.f.c.internal.database.base.Database    : Using MySQL 8.4 which is newer than the version Flyway has been verified with. The latest verified version of MySQL is 8.1.
+2026-11-19T02:25:53.209-03:00  INFO 24866 --- [sombrasp-cyber] [           main] o.f.c.i.s.JdbcTableSchemaHistory         : Schema history table `sombrasp_cyber`.`flyway_schema_history` does not exist yet
+2026-11-19T02:25:53.211-03:00  INFO 24866 --- [sombrasp-cyber] [           main] o.f.core.internal.command.DbValidate     : Successfully validated 8 migrations (execution time 00:00.013s)
+2026-11-19T02:25:53.221-03:00  INFO 24866 --- [sombrasp-cyber] [           main] o.f.c.i.s.JdbcTableSchemaHistory         : Creating Schema History table `sombrasp_cyber`.`flyway_schema_history` ...
+2026-11-19T02:25:53.249-03:00  INFO 24866 --- [sombrasp-cyber] [           main] o.f.core.internal.command.DbMigrate      : Current version of schema `sombrasp_cyber`: << Empty Schema >>
+2026-11-19T02:25:53.253-03:00  INFO 24866 --- [sombrasp-cyber] [           main] o.f.core.internal.command.DbMigrate      : Migrating schema `sombrasp_cyber` to version "1 - create-table-parceiros"
+2026-11-19T02:25:53.276-03:00  INFO 24866 --- [sombrasp-cyber] [           main] o.f.core.internal.command.DbMigrate      : Migrating schema `sombrasp_cyber` to version "2 - create-table-pontos-apoio"
+2026-11-19T02:25:53.298-03:00  INFO 24866 --- [sombrasp-cyber] [           main] o.f.core.internal.command.DbMigrate      : Migrating schema `sombrasp_cyber` to version "3 - create-table-alertas-calor"
+2026-11-19T02:25:53.316-03:00  INFO 24866 --- [sombrasp-cyber] [           main] o.f.core.internal.command.DbMigrate      : Migrating schema `sombrasp_cyber` to version "4 - create-table-usuarios"
+2026-11-19T02:25:53.332-03:00  INFO 24866 --- [sombrasp-cyber] [           main] o.f.core.internal.command.DbMigrate      : Migrating schema `sombrasp_cyber` to version "5 - alter-table-alertas-calor-add-column-encerrado-em"
+2026-11-19T02:25:53.352-03:00  INFO 24866 --- [sombrasp-cyber] [           main] o.f.core.internal.command.DbMigrate      : Migrating schema `sombrasp_cyber` to version "6 - inserir-dados-iniciais"
+2026-11-19T02:25:53.362-03:00  INFO 24866 --- [sombrasp-cyber] [           main] o.f.core.internal.command.DbMigrate      : Migrating schema `sombrasp_cyber` to version "7 - create-table-cidadaos"
+2026-11-19T02:25:53.377-03:00  INFO 24866 --- [sombrasp-cyber] [           main] o.f.core.internal.command.DbMigrate      : Migrating schema `sombrasp_cyber` to version "8 - create-table-eventos-seguranca"
+2026-11-19T02:25:53.404-03:00  INFO 24866 --- [sombrasp-cyber] [           main] o.f.core.internal.command.DbMigrate      : Successfully applied 8 migrations to schema `sombrasp_cyber`, now at version v8 (execution time 00:00.081s)
+2026-11-19T02:25:53.451-03:00  INFO 24866 --- [sombrasp-cyber] [           main] org.hibernate.orm.jpa                    : HHH008540: Processing PersistenceUnitInfo [name: default]
+2026-11-19T02:25:53.474-03:00  INFO 24866 --- [sombrasp-cyber] [           main] org.hibernate.orm.core                   : HHH000001: Hibernate ORM core version 7.2.7.Final
+2026-11-19T02:25:53.619-03:00  INFO 24866 --- [sombrasp-cyber] [           main] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2026-11-19T02:25:53.648-03:00  INFO 24866 --- [sombrasp-cyber] [           main] org.hibernate.orm.connections.pooling    : HHH10001005: Database info:
+	Database JDBC URL [jdbc:mysql://localhost:3307/sombrasp_cyber]
+	Database driver: MySQL Connector/J
+	Database dialect: MySQLDialect
+	Database version: 8.4.13
+	Default catalog/schema: sombrasp_cyber/undefined
+	Autocommit mode: undefined/unknown
+	Isolation level: REPEATABLE_READ [default REPEATABLE_READ]
+	JDBC fetch size: none
+	Pool: DataSourceConnectionProvider
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2026-11-19T02:25:53.996-03:00  INFO 24866 --- [sombrasp-cyber] [           main] org.hibernate.orm.core                   : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2026-11-19T02:25:53.998-03:00  INFO 24866 --- [sombrasp-cyber] [           main] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2026-11-19T02:25:54.028-03:00  INFO 24866 --- [sombrasp-cyber] [           main] o.s.d.j.r.query.QueryEnhancerFactories   : Hibernate is in classpath; If applicable, HQL parser will be used.
+2026-11-19T02:25:54.206-03:00  INFO 24866 --- [sombrasp-cyber] [           main] r$InitializeUserDetailsManagerConfigurer : Global AuthenticationManager configured with UserDetailsService bean with name autenticacaoService
+2026-11-19T02:25:54.951-03:00  INFO 24866 --- [sombrasp-cyber] [           main] o.s.boot.tomcat.TomcatWebServer          : Tomcat started on port 8086 (http) with context path '/'
+2026-11-19T02:25:54.954-03:00  INFO 24866 --- [sombrasp-cyber] [           main] b.c.f.sombrasp.SombraSpApplication       : Started SombraSpApplication in 3.45 seconds (process running for 3.604)
+2026-11-19T02:25:54.955-03:00  WARN 24866 --- [sombrasp-cyber] [           main] o.s.core.events.SpringDocAppInitializer  : SpringDoc /v3/api-docs endpoint is enabled by default. To disable it in production, set the property 'springdoc.api-docs.enabled=false'
+2026-11-19T02:25:54.955-03:00  WARN 24866 --- [sombrasp-cyber] [           main] o.s.core.events.SpringDocAppInitializer  : SpringDoc /swagger-ui.html endpoint is enabled by default. To disable it in production, set the property 'springdoc.swagger-ui.enabled=false'
+2026-11-19T02:25:56.209-03:00  INFO 24866 --- [sombrasp-cyber] [nio-8086-exec-1] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring DispatcherServlet 'dispatcherServlet'
+2026-11-19T02:25:56.209-03:00  INFO 24866 --- [sombrasp-cyber] [nio-8086-exec-1] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
+2026-11-19T02:25:56.210-03:00  INFO 24866 --- [sombrasp-cyber] [nio-8086-exec-1] o.s.web.servlet.DispatcherServlet        : Completed initialization in 1 ms
+2026-11-19T02:25:56.260-03:00  INFO 24866 --- [sombrasp-cyber] [nio-8086-exec-2] b.c.f.s.s.taint.FiltroParsingPii         : [PII] POST /cidadaos -> 4 dado(s) pessoal(is) marcado(s) como contaminado(s): CPF em $.cpf (***.456.***-09); RG em $.rg (**.***.678-9); DADO_SAUDE em $.condicaoSaude ([DADO DE SAÚDE PROTEGIDO]); SENHA em $.senha ([SENHA PROTEGIDA])
+2026-11-19T02:25:56.282-03:00  INFO 24866 --- [sombrasp-cyber] [risco-cidadao-1] b.c.f.s.s.evento.EventoSegurancaService  : [RISCO] Evento PII_DETECTADA (BAIXO) registrado, protocolo 12236562-6376-4b15-98a9-d2587002227e
+2026-11-19T02:25:56.387-03:00  INFO 24866 --- [sombrasp-cyber] [nio-8086-exec-2] b.c.f.s.service.CadastroCidadaoService   : Cidadão 1 cadastrado: cpf=***.456.***-09, rg=**.***.678-9, saude=[DADO DE SAÚDE PROTEGIDO]
+2026-11-19T02:25:56.482-03:00  INFO 24866 --- [sombrasp-cyber] [nio-8086-exec-5] b.c.f.s.s.taint.FiltroParsingPii         : [PII] POST /laboratorio/vazamento-log -> 1 dado(s) pessoal(is) marcado(s) como contaminado(s): CPF em $.documento (***.456.***-00)
+2026-11-19T02:25:56.485-03:00  INFO 24866 --- [sombrasp-cyber] [nio-8086-exec-5] c.f.s.s.l.LaboratorioVazamentoController : Depuração do cadastro: cpf=null, senha=null
+2026-11-19T02:25:56.485-03:00  INFO 24866 --- [sombrasp-cyber] [risco-cidadao-2] b.c.f.s.s.evento.EventoSegurancaService  : [RISCO] Evento PII_DETECTADA (BAIXO) registrado, protocolo 2baee525-7d29-40da-b343-6a7d781da74a
+2026-11-19T02:25:56.493-03:00  INFO 24866 --- [sombrasp-cyber] [nio-8086-exec-7] b.c.f.s.s.taint.FiltroParsingPii         : [PII] POST /laboratorio/vazamento-log -> 2 dado(s) pessoal(is) marcado(s) como contaminado(s): CPF em $.cpf (***.456.***-09); SENHA em $.senha ([SENHA PROTEGIDA])
+2026-11-19T02:25:56.494-03:00  WARN 24866 --- [sombrasp-cyber] [nio-8086-exec-7] c.f.s.s.l.LaboratorioVazamentoController : [TAINT] Log bloqueado: Taint sink bloqueado: o logger 'LaboratorioVazamentoController' tentou gravar CPF, SENHA em log (nível INFO) durante POST /laboratorio/vazamento-log. Linha descartada; conteúdo mascarado: Depuração do cadastro: cpf=***.456.***-09, senha=[SENHA PROTEGIDA]
+2026-11-19T02:25:56.502-03:00  INFO 24866 --- [sombrasp-cyber] [nio-8086-exec-9] b.c.f.s.s.taint.FiltroParsingPii         : [PII] POST /laboratorio/vazamento-console -> 1 dado(s) pessoal(is) marcado(s) como contaminado(s): DADO_SAUDE em $.condicaoSaude ([DADO DE SAÚDE PROTEGIDO])
+[TAINT] Console bloqueado: Taint sink bloqueado: System.out.println tentou imprimir DADO_SAUDE no console durante POST /laboratorio/vazamento-console. Conteúdo mascarado: Laudo recebido do cidadão: [DADO DE SAÚDE PROTEGIDO]
+2026-11-19T02:25:56.516-03:00  WARN 24866 --- [sombrasp-cyber] [nio-8086-exec-1] b.c.f.s.s.taint.GuardaTaintResposta      : [TAINT] Resposta bloqueada: Taint sink bloqueado: resposta HTTP não autenticada de GET /laboratorio/ficha-saude/1 continha CPF ($.cpf), RG ($.rg), DADO_SAUDE ($.condicaoSaude). Resposta trocada por HTTP 403 (bloqueio de vazamento de PII). (protocolo d5896c2a-c12d-401c-8b0a-670d4c39e75a)
+2026-11-19T02:25:56.524-03:00  INFO 24866 --- [sombrasp-cyber] [nio-8086-exec-4] b.c.f.s.s.taint.FiltroParsingPii         : [PII] POST /login -> 1 dado(s) pessoal(is) marcado(s) como contaminado(s): SENHA em $.senha ([SENHA PROTEGIDA])
+2026-11-19T02:25:56.704-03:00  INFO 24866 --- [sombrasp-cyber] [nio-8086-exec-5] b.c.f.s.s.taint.GuardaTaintResposta      : [TAINT] Resposta de GET /laboratorio/ficha-saude/1 mascarada para usuário autenticado: CPF ($.cpf), RG ($.rg), DADO_SAUDE ($.condicaoSaude)
+2026-11-19T02:25:58.160-03:00  INFO 24866 --- [sombrasp-cyber] [risco-cidadao-2] b.c.f.s.seguranca.ia.TradutorMiniMax     : [IA] Evento PII_DETECTADA traduzido por MiniMax-M3.1-Flash em 1674 ms
+2026-11-19T02:25:58.176-03:00  INFO 24866 --- [sombrasp-cyber] [risco-cidadao-2] b.c.f.s.s.evento.EventoSegurancaService  : [RISCO] Evento PII_DETECTADA (BAIXO) registrado, protocolo 329ba9a2-3199-40a4-b099-cce23caeac01
+2026-11-19T02:25:59.286-03:00  INFO 24866 --- [sombrasp-cyber] [risco-cidadao-2] b.c.f.s.seguranca.ia.TradutorMiniMax     : [IA] Evento PII_DETECTADA traduzido por MiniMax-M3.1-Flash em 1109 ms
+2026-11-19T02:25:59.300-03:00  INFO 24866 --- [sombrasp-cyber] [risco-cidadao-2] b.c.f.s.s.evento.EventoSegurancaService  : [RISCO] Evento VAZAMENTO_LOG_BLOQUEADO (MEDIO) registrado, protocolo 732e5ea6-7270-4333-8dc6-b75e20e25d73
+2026-11-19T02:26:01.054-03:00  INFO 24866 --- [sombrasp-cyber] [risco-cidadao-1] b.c.f.s.seguranca.ia.TradutorMiniMax     : [IA] Evento PII_DETECTADA traduzido por MiniMax-M3.1-Flash em 4772 ms
+2026-11-19T02:26:01.064-03:00  INFO 24866 --- [sombrasp-cyber] [risco-cidadao-1] b.c.f.s.s.evento.EventoSegurancaService  : [RISCO] Evento PII_DETECTADA (BAIXO) registrado, protocolo 3be004e5-af40-4598-96ed-6e53ba1cb2e3
+2026-11-19T02:26:02.711-03:00  INFO 24866 --- [sombrasp-cyber] [risco-cidadao-2] b.c.f.s.seguranca.ia.TradutorMiniMax     : [IA] Evento VAZAMENTO_LOG_BLOQUEADO traduzido por MiniMax-M3.1-Flash em 3410 ms
+2026-11-19T02:26:02.723-03:00  INFO 24866 --- [sombrasp-cyber] [risco-cidadao-2] b.c.f.s.s.evento.EventoSegurancaService  : [RISCO] Evento VAZAMENTO_CONSOLE_BLOQUEADO (MEDIO) registrado, protocolo 82fbaa3a-1741-4d14-8a30-ce937e4f03ad
+2026-11-19T02:26:03.030-03:00  INFO 24866 --- [sombrasp-cyber] [risco-cidadao-1] b.c.f.s.seguranca.ia.TradutorMiniMax     : [IA] Evento PII_DETECTADA traduzido por MiniMax-M3.1-Flash em 1965 ms
+2026-11-19T02:26:03.039-03:00  INFO 24866 --- [sombrasp-cyber] [risco-cidadao-1] b.c.f.s.s.evento.EventoSegurancaService  : [RISCO] Evento VAZAMENTO_RESPOSTA_BLOQUEADO (ALTO) registrado, protocolo d5896c2a-c12d-401c-8b0a-670d4c39e75a
+2026-11-19T02:26:03.661-03:00  INFO 24866 --- [sombrasp-cyber] [risco-cidadao-2] b.c.f.s.seguranca.ia.TradutorMiniMax     : [IA] Evento VAZAMENTO_CONSOLE_BLOQUEADO traduzido por MiniMax-M3.1-Flash em 938 ms
+2026-11-19T02:26:03.672-03:00  INFO 24866 --- [sombrasp-cyber] [risco-cidadao-2] b.c.f.s.s.evento.EventoSegurancaService  : [RISCO] Evento DADO_MASCARADO_NA_RESPOSTA (BAIXO) registrado, protocolo d218fcbf-e28f-4df0-9a85-7ec68701573e
+2026-11-19T02:26:05.783-03:00  INFO 24866 --- [sombrasp-cyber] [risco-cidadao-1] b.c.f.s.seguranca.ia.TradutorMiniMax     : [IA] Evento VAZAMENTO_RESPOSTA_BLOQUEADO traduzido por MiniMax-M3.1-Flash em 2743 ms
+2026-11-19T02:26:13.630-03:00  INFO 24866 --- [sombrasp-cyber] [risco-cidadao-2] b.c.f.s.seguranca.ia.TradutorMiniMax     : [IA] Evento DADO_MASCARADO_NA_RESPOSTA traduzido por MiniMax-M3.1-Flash em 9956 ms
+2026-11-19T02:28:54.978-03:00  INFO 24866 --- [sombrasp-cyber] [nio-8086-exec-7] b.c.f.s.s.taint.FiltroParsingPii         : [PII] POST /cidadaos -> 4 dado(s) pessoal(is) marcado(s) como contaminado(s): CPF em $.cpf (***.469.***-14); RG em $.rg (**.***.296-5); DADO_SAUDE em $.condicaoSaude ([DADO DE SAÚDE PROTEGIDO]); SENHA em $.senha ([SENHA PROTEGIDA])
+2026-11-19T02:28:54.988-03:00  INFO 24866 --- [sombrasp-cyber] [risco-cidadao-1] b.c.f.s.s.evento.EventoSegurancaService  : [RISCO] Evento PII_DETECTADA (BAIXO) registrado, protocolo 8866aca6-4f37-46fc-a79f-66f476ceb6b6
+2026-11-19T02:28:55.059-03:00  INFO 24866 --- [sombrasp-cyber] [nio-8086-exec-7] b.c.f.s.service.CadastroCidadaoService   : Cidadão 2 cadastrado: cpf=***.469.***-14, rg=**.***.296-5, saude=[DADO DE SAÚDE PROTEGIDO]
+2026-11-19T02:29:01.979-03:00  INFO 24866 --- [sombrasp-cyber] [risco-cidadao-1] b.c.f.s.seguranca.ia.TradutorMiniMax     : [IA] Evento PII_DETECTADA traduzido por MiniMax-M3.1-Flash em 6990 ms
+2026-11-19T02:29:15.579-03:00  INFO 24866 --- [sombrasp-cyber] [nio-8086-exec-2] b.c.f.s.s.taint.FiltroParsingPii         : [PII] POST /laboratorio/vazamento-log -> 2 dado(s) pessoal(is) marcado(s) como contaminado(s): CPF em $.cpf (***.469.***-14); SENHA em $.senha ([SENHA PROTEGIDA])
+2026-11-19T02:29:15.581-03:00  WARN 24866 --- [sombrasp-cyber] [nio-8086-exec-2] c.f.s.s.l.LaboratorioVazamentoController : [TAINT] Log bloqueado: Taint sink bloqueado: o logger 'LaboratorioVazamentoController' tentou gravar CPF, SENHA em log (nível INFO) durante POST /laboratorio/vazamento-log. Linha descartada; conteúdo mascarado: Depuração do cadastro: cpf=***.469.***-14, senha=[SENHA PROTEGIDA]
+2026-11-19T02:29:15.595-03:00  INFO 24866 --- [sombrasp-cyber] [risco-cidadao-2] b.c.f.s.s.evento.EventoSegurancaService  : [RISCO] Evento PII_DETECTADA (BAIXO) registrado, protocolo 2fa4223a-debf-434c-b1ad-a736e1fd5cf1
+2026-11-19T02:29:15.594-03:00  INFO 24866 --- [sombrasp-cyber] [risco-cidadao-1] b.c.f.s.s.evento.EventoSegurancaService  : [RISCO] Evento VAZAMENTO_LOG_BLOQUEADO (MEDIO) registrado, protocolo fda33bf7-5536-4aad-8a51-aa88361bdb41
+2026-11-19T02:29:18.980-03:00  INFO 24866 --- [sombrasp-cyber] [risco-cidadao-2] b.c.f.s.seguranca.ia.TradutorMiniMax     : [IA] Evento PII_DETECTADA traduzido por MiniMax-M3.1-Flash em 3384 ms
+2026-11-19T02:29:22.192-03:00  INFO 24866 --- [sombrasp-cyber] [risco-cidadao-1] b.c.f.s.seguranca.ia.TradutorMiniMax     : [IA] Evento VAZAMENTO_LOG_BLOQUEADO traduzido por MiniMax-M3.1-Flash em 6596 ms
+2026-11-19T02:29:33.565-03:00  INFO 24866 --- [sombrasp-cyber] [nio-8086-exec-1] b.c.f.s.s.taint.FiltroParsingPii         : [PII] POST /laboratorio/vazamento-console -> 1 dado(s) pessoal(is) marcado(s) como contaminado(s): DADO_SAUDE em $.condicaoSaude ([DADO DE SAÚDE PROTEGIDO])
+[TAINT] Console bloqueado: Taint sink bloqueado: System.out.println tentou imprimir DADO_SAUDE no console durante POST /laboratorio/vazamento-console. Conteúdo mascarado: Laudo recebido do cidadão: [DADO DE SAÚDE PROTEGIDO]
+2026-11-19T02:29:33.574-03:00  INFO 24866 --- [sombrasp-cyber] [risco-cidadao-2] b.c.f.s.s.evento.EventoSegurancaService  : [RISCO] Evento PII_DETECTADA (BAIXO) registrado, protocolo c5e9d518-5b45-4644-8435-87067c5e6363
+2026-11-19T02:29:33.574-03:00  INFO 24866 --- [sombrasp-cyber] [risco-cidadao-1] b.c.f.s.s.evento.EventoSegurancaService  : [RISCO] Evento VAZAMENTO_CONSOLE_BLOQUEADO (MEDIO) registrado, protocolo 624fc6b8-5aaf-4494-95e2-8a8b8616adaf
+2026-11-19T02:29:36.789-03:00  INFO 24866 --- [sombrasp-cyber] [risco-cidadao-2] b.c.f.s.seguranca.ia.TradutorMiniMax     : [IA] Evento PII_DETECTADA traduzido por MiniMax-M3.1-Flash em 3215 ms
+2026-11-19T02:29:38.448-03:00  INFO 24866 --- [sombrasp-cyber] [risco-cidadao-1] b.c.f.s.seguranca.ia.TradutorMiniMax     : [IA] Evento VAZAMENTO_CONSOLE_BLOQUEADO traduzido por MiniMax-M3.1-Flash em 4873 ms
+2026-11-19T02:29:42.269-03:00  WARN 24866 --- [sombrasp-cyber] [nio-8086-exec-4] b.c.f.s.s.taint.GuardaTaintResposta      : [TAINT] Resposta bloqueada: Taint sink bloqueado: resposta HTTP não autenticada de GET /laboratorio/ficha-saude/2 continha CPF ($.cpf), RG ($.rg), DADO_SAUDE ($.condicaoSaude). Resposta trocada por HTTP 403 (bloqueio de vazamento de PII). (protocolo 9be14d2a-1e8e-4021-bcd0-ea45419dc645)
+2026-11-19T02:29:42.273-03:00  INFO 24866 --- [sombrasp-cyber] [risco-cidadao-2] b.c.f.s.s.evento.EventoSegurancaService  : [RISCO] Evento VAZAMENTO_RESPOSTA_BLOQUEADO (ALTO) registrado, protocolo 9be14d2a-1e8e-4021-bcd0-ea45419dc645
+2026-11-19T02:29:45.864-03:00  INFO 24866 --- [sombrasp-cyber] [risco-cidadao-2] b.c.f.s.seguranca.ia.TradutorMiniMax     : [IA] Evento VAZAMENTO_RESPOSTA_BLOQUEADO traduzido por MiniMax-M3.1-Flash em 3590 ms
