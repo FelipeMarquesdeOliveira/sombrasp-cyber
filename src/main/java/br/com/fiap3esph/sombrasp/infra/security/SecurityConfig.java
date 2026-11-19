@@ -18,6 +18,8 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 /**
  * Regras de acesso:
  *  - públicas (cidadão/app): GET de pontos, alertas e parceiros, health-check, login e Swagger;
+ *  - Cybersecurity: POST /cidadaos (inscrição pelo app), painel /painel e /risco-cidadao (sem PII)
+ *    e /laboratorio (erros simulados de propósito; desligável por propriedade);
  *  - demais operações (cadastrar, atualizar, excluir, emitir/encerrar alerta): perfil GESTOR com JWT.
  */
 @Configuration
@@ -36,6 +38,12 @@ public class SecurityConfig {
                     req.requestMatchers(HttpMethod.POST, "/login").permitAll();
                     req.requestMatchers(HttpMethod.GET, "/health-check", "/pontos/**", "/alertas/**", "/parceiros/**")
                             .permitAll();
+                    // Cybersecurity: inscrição do cidadão (app), painel de Risco Cidadão e laboratório de demonstração
+                    req.requestMatchers(HttpMethod.POST, "/cidadaos").permitAll();
+                    req.requestMatchers(HttpMethod.GET, "/", "/painel", "/painel/**", "/risco-cidadao/**", "/favicon.ico")
+                            .permitAll();
+                    req.requestMatchers("/laboratorio/**").permitAll();
+                    req.requestMatchers("/error").permitAll();
                     req.requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll();
                     req.anyRequest().hasRole("GESTOR");
                 })
