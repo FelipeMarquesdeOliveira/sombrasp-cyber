@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Logback do SombraSP Cyber. O GuardaTaintLog é um TurboFilter: roda antes de qualquer
+  linha de log e descarta as que carregam dado pessoal (Taint Analysis, sink de LOG).
+-->
+<configuration>
+    <turboFilter class="br.com.fiap3esph.sombrasp.seguranca.taint.GuardaTaintLog"/>
+
+    <include resource="org/springframework/boot/logging/logback/defaults.xml"/>
+    <include resource="org/springframework/boot/logging/logback/console-appender.xml"/>
+
+    <root level="INFO">
+        <appender-ref ref="CONSOLE"/>
+    </root>
+</configuration>
