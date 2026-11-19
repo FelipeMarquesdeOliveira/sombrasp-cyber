@@ -16,10 +16,12 @@ public class OpenApiConfig {
     public OpenAPI customOpenAPI() {
         return new OpenAPI()
                 .info(new Info()
-                        .title("SombraSP API")
+                        .title("SombraSP Cyber API")
                         .description("""
-                                Backend REST da CitizenTech SombraSP (Global Solution 2026.2 - SOA e Web Services, FIAP 3ESPH).
-                                Gestão de pontos de sombra e hidratação e de alertas de calor (>= 31 °C) no Centro de São Paulo.
+                                Backend REST da CitizenTech SombraSP com a camada de Cybersecurity (Global Solution 2026.2, FIAP 3ESPH):
+                                parsing de PII (CPF, RG, saúde, senha), Taint Analysis nas saídas (log, console, resposta HTTP),
+                                tradução dos eventos por IA (MiniMax) e painel de Risco Cidadão em /painel/.
+                                Base: API de SOA do SombraSP (pontos de sombra e hidratação e alertas de calor >= 31 °C).
                                 Consultas são públicas (cidadão/app). Cadastrar, atualizar, excluir e emitir/encerrar alertas
                                 exigem token JWT de gestor: faça POST /login e clique em Authorize.
                                 Equipe: Felipe Marques de Oliveira (RM 556319) e Gabriel Barros Cisoto (RM 556309).""")
