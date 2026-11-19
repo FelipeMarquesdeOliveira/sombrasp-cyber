@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Risco Cidadão · SombraSP</title>
+    <link rel="icon" href="icone.png">
+    <link rel="stylesheet" href="painel.css">
+</head>
+<body>
+<header class="topo">
+    <div class="marca">
+        <img src="icone.png" alt="" width="48" height="48">
+        <div>
+            <h1>Risco Cidadão</h1>
+            <p>SombraSP · Painel de privacidade e proteção de dados</p>
+        </div>
+    </div>
+    <div class="ao-vivo" aria-live="off">
+        <span class="ponto"></span>
+        <span>Ao vivo · atualiza a cada 2 s</span>
+        <span class="hora" id="atualizadoEm">--:--:--</span>
+    </div>
+</header>
+
+<ol class="fluxo" aria-label="Como a proteção funciona">
+    <li id="etapa-entrada"><b>1</b><div><strong>Entrada</strong><span>CPF, RG, saúde e senha são detectados e mascarados</span></div></li>
+    <li id="etapa-taint"><b>2</b><div><strong>Taint Analysis</strong><span>Log, console e resposta sem login são vigiados</span></div></li>
+    <li id="etapa-ia"><b>3</b><div><strong>IA</strong><span>O erro técnico vira uma mensagem simples</span></div></li>
+    <li id="etapa-painel"><b>4</b><div><strong>Painel</strong><span>O farol mostra o risco para o cidadão</span></div></li>
+</ol>
+
+<main class="grade">
+    <section class="cartao principal" aria-labelledby="tituloRisco">
+        <div class="farol" id="farol" role="img" aria-label="Farol de risco">
+            <span class="luz vermelho"></span>
+            <span class="luz amarelo"></span>
+            <span class="luz verde"></span>
+        </div>
+        <div class="leitura">
+            <p class="rotulo">Risco atual</p>
+            <h2 id="tituloRisco">Carregando…</h2>
+            <p class="mensagem" id="mensagem" aria-live="polite">Buscando a situação dos seus dados.</p>
+            <div class="origem" id="origem"></div>
+        </div>
+    </section>
+
+    <section class="indicadores" aria-label="Indicadores da última hora">
+        <div class="cartao indicador verde"><span class="numero" id="indProtegidos">0</span><span>dados pessoais protegidos</span></div>
+        <div class="cartao indicador amarelo"><span class="numero" id="indLog">0</span><span>vazamentos barrados em log e console</span></div>
+        <div class="cartao indicador vermelho"><span class="numero" id="indResposta">0</span><span>respostas sem login bloqueadas</span></div>
+        <div class="cartao indicador ia"><span class="numero" id="indIa">0</span><span>mensagens traduzidas pela IA</span></div>
+    </section>
+
+    <section class="cartao simulador" aria-labelledby="tituloSimulador">
+        <div class="cabecalho">
+            <h3 id="tituloSimulador">Simulador de ataques e erros</h3>
+            <button class="secundario" id="btnReiniciar" type="button">Reiniciar demonstração</button>
+        </div>
+        <p class="nota">Dados fictícios gerados na hora. Cada botão chama a API de verdade.</p>
+        <div class="acoes">
+            <button type="button" class="acao" data-acao="cadastro">
+                <span class="num verde">1</span>
+                <span><strong>Cidadão se cadastra</strong><small>Envia CPF, RG, condição de saúde e senha</small></span>
+            </button>
+            <button type="button" class="acao" data-acao="log">
+                <span class="num amarelo">2</span>
+                <span><strong>Código tenta logar a senha</strong><small>log.info com CPF e senha em claro</small></span>
+            </button>
+            <button type="button" class="acao" data-acao="console">
+                <span class="num amarelo">3</span>
+                <span><strong>Código imprime o laudo</strong><small>System.out.println com dado de saúde</small></span>
+            </button>
+            <button type="button" class="acao" data-acao="resposta">
+                <span class="num vermelho">4</span>
+                <span><strong>Pedem a ficha de saúde sem login</strong><small>Resposta HTTP com CPF e laudo</small></span>
+            </button>
+        </div>
+        <div class="resultado" id="resultado" aria-live="polite">Escolha uma ação acima.</div>
+    </section>
+
+    <section class="cartao trilha" aria-labelledby="tituloTrilha">
+        <div class="cabecalho">
+            <h3 id="tituloTrilha">Trilha de auditoria</h3>
+            <span class="nota" id="totalEventos">0 eventos na última hora</span>
+        </div>
+        <table>
+            <thead>
+            <tr><th>Hora</th><th>Nível</th><th>Evento</th><th>Área</th><th>Detalhe técnico (mascarado)</th><th>Mensagem para o cidadão</th></tr>
+            </thead>
+            <tbody id="eventos">
+            <tr class="vazio"><td colspan="6">Nenhum evento ainda.</td></tr>
+            </tbody>
+        </table>
+    </section>
+</main>
+
+<footer>Dados fictícios · Nenhum dado pessoal real · GS 2026.2 · FIAP 3ESPH · Felipe Marques de Oliveira e Gabriel Barros Cisoto</footer>
+<script src="painel.js"></script>
+</body>
+</html>
